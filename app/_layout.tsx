@@ -1,11 +1,24 @@
-import { Slot, Stack } from "expo-router";
+import { Slot, SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import "../global.css";
+import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
 	const [fontsLoaded, error] = useFonts({
 		"Roboto-Mono": require("../assets/fonts/RobotoMono-Regular.ttf"),
 	});
+
+	useEffect(() => {
+		if (error) throw error;
+		if (fontsLoaded) {
+			SplashScreen.hideAsync();
+		}
+	}, [fontsLoaded, error]);
+	if (!fontsLoaded) return null;
+	if (!fontsLoaded && !error) return null;
+
 	return (
 		<Stack>
 			<Stack.Screen
@@ -19,6 +32,10 @@ const RootLayout = () => {
 			<Stack.Screen
 				name="index"
 				options={{ headerShown: false }}
+			/>
+			<Stack.Screen
+				name="(modal)/adjust-meditation-duration"
+				options={{ headerShown: false, presentation: "modal" }}
 			/>
 		</Stack>
 	);
