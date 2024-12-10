@@ -111,7 +111,7 @@ const Meditate = () => {
 					</View>
 					<View className="mb-5">
 						<CustomButton
-							title="Start Meditation"
+							title={isMeditating ? "Stop" : "Start Meditation"}
 							onPress={toggleSessionMusic}
 						/>
 						<CustomButton
