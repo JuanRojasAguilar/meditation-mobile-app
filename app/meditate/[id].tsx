@@ -4,13 +4,16 @@ import AppGradient from "@/components/AppGradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 import CustomButton from "@/components/CustomButton";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Audio } from "expo-av";
 import { MEDITATION_DATA, AUDIO_FILES } from "@/constants/MeditationData";
+import { TimerContext } from "@/context/TimerContext";
 
 const Meditate = () => {
 	const { id } = useLocalSearchParams();
-	const [secondsRemaining, setSecondsRemaining] = useState(10);
+
+	const { duration: secondsRemaining, setDuration } = useContext(TimerContext);
+
 	const [isMeditating, setIsMeditating] = useState(false);
 	const [audioSound, setAudioSound] = useState<Audio.Sound>();
 	const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -25,7 +28,7 @@ const Meditate = () => {
 
 		if (isMeditating) {
 			timerId = setTimeout(() => {
-				setSecondsRemaining(secondsRemaining - 1);
+				setDuration(secondsRemaining - 1);
 			}, 1000);
 		}
 
@@ -37,8 +40,8 @@ const Meditate = () => {
 	useEffect(() => {
 		return () => {
 			audioSound?.unloadAsync();
-		}
-	},[audioSound]);
+		};
+	}, [audioSound]);
 
 	const formattedTimeMinutes = String(
 		Math.floor(secondsRemaining / 60)
@@ -57,10 +60,10 @@ const Meditate = () => {
 			await sound.pauseAsync();
 			setIsAudioPlaying(false);
 		}
-	}
+	};
 
 	const toggleSessionMusic = async () => {
-		if (secondsRemaining === 0) setSecondsRemaining(10);
+		if (secondsRemaining === 0) setDuration(10);
 
 		setIsMeditating(!isMeditating);
 		await toggleSound();
@@ -79,7 +82,7 @@ const Meditate = () => {
 		if (isMeditating) toggleSessionMusic();
 
 		router.push("/(modal)/adjust-meditation-duration");
-	}
+	};
 
 	return (
 		<View className="flex-1">
@@ -109,11 +112,11 @@ const Meditate = () => {
 					<View className="mb-5">
 						<CustomButton
 							title="Start Meditation"
-							onPress={handleAdjustDuration}
+							onPress={toggleSessionMusic}
 						/>
 						<CustomButton
 							title="Adjust duration"
-							onPress={toggleSessionMusic}
+							onPress={handleAdjustDuration}
 							containerStyles="mt-4"
 						/>
 					</View>
